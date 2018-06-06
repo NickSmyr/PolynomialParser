@@ -20,9 +20,11 @@ public class Term {
 	public double getValueAt(double x ){
 		return coefficient * Math.pow(x,power);
 	}
-	//toString
+	@Override
 	public String toString(){
-		return String.format("%.2f*(x^%d)",coefficient,power);
+		StringBuilder coeffStr = new StringBuilder(String.format("%.2f",coefficient));
+		if(coefficient > 0) coeffStr.insert(0, "+" );
+		return String.format("%s * (x ^ %d) ",coeffStr.toString(),power);
 	}
 	/*
 	Returns a polynomial parsed from a given string
@@ -30,16 +32,30 @@ public class Term {
 	@return Term parsed
 	*/
 	public static Term parseTerm(String input) throws InputMismatchException{
+		System.out.println(input);
 		double coefficient = -1;
 		int power = -1;
-		for(int i=0;i<input.length();i++){
-			
-			if(input.startsWith("+") || input.startsWith("-")||Character.isDigit(input.charAt(i))){//Coefficient is specified 
-				String coeff = "";
+		boolean coefficient_found = false;
+		input = input.trim();
+		int i = 0;
+		int temp = 1; //Spaghetii pls
+		if(input.startsWith("-")) {
+			temp = -1;
+			i=1;
+		}
+		else if(input.startsWith("+")) {
+			temp = 1;
+			i=1;
+		}
+		for(;i<input.length();i++){
+		
+			if(Character.isDigit(input.charAt(i))){//Coefficient is specified 
+				String coeff = "";						
 				for(;i<input.length() && input.charAt(i) != '*';i++ ){ //Loops as long as the user hasn't entered *
 					coeff += input.charAt(i);
 				}
-				coefficient = Double.parseDouble(coeff); //saving coefficient
+				coefficient = temp * Double.parseDouble(coeff); //saving coefficient
+				coefficient_found = true;
 			}
 			if(i<input.length() && input.charAt(i) == '('){
 				String pow="";
@@ -51,7 +67,8 @@ public class Term {
 			}		
 		}
 		//Data check
-		if(power == -1 || coefficient == -1) throw new InputMismatchException();
+		if(! coefficient_found) coefficient = 1;
+		if(power <= -1 ) throw new InputMismatchException();
 		else return new Term(coefficient,power);
 	}
 }

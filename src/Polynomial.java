@@ -14,14 +14,14 @@ public class Polynomial{
 	*/
 	public static Polynomial parsePolynomial(String input) throws InputMismatchException{
 		ArrayList<Term> terms = new ArrayList<Term>();
-		for(int i=0;i<input.length();i++){//Loops through every character
-			String termData = "";
+		for(int i=0;i<input.length();){//Loops through every character
+			StringBuilder termData = new StringBuilder();
 			
-			while(i <input.length() && input.charAt(i) != '+' &&  input.charAt(i) != '-'){ //Until we find the next term
-				termData += input.charAt(i);
+			do { //Until we find the next term
+				termData.append(input.charAt(i));
 				i++;
-			}
-			terms.add(Term.parseTerm(termData));
+			}while(i <input.length() && input.charAt(i) != '+' &&  input.charAt(i) != '-');
+			terms.add(Term.parseTerm(termData.toString()));
 			
 		}
 		return new Polynomial(terms);
